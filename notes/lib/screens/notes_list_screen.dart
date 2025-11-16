@@ -168,11 +168,23 @@ class _NotesListScreenState extends State<NotesListScreen> {
                     ),
                     trailing: PopupMenuButton<String>(
                       onSelected: (value) {
-                        if (value == 'delete') {
+                        if (value == 'edit') {
+                          _editNote(note);
+                        } else if (value == 'delete') {
                           _deleteNote(note);
                         }
                       },
                       itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit, color: Colors.blue),
+                              SizedBox(width: 8),
+                              Text('Modifier'),
+                            ],
+                          ),
+                        ),
                         const PopupMenuItem(
                           value: 'delete',
                           child: Row(
