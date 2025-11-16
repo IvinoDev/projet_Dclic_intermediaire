@@ -100,6 +100,19 @@ class DatabaseService {
     return await db.delete('notes', where: 'id = ?', whereArgs: [id]);
   }
 
+  // Vider toutes les données (notes et utilisateurs)
+  Future<void> clearAllData() async {
+    if (kIsWeb) {
+      debugPrint('🌐 Vidage de toutes les données WEB');
+      await _webStorage.clearAll();
+      debugPrint('🌐 Toutes les données WEB ont été vidées');
+    } else {
+      debugPrint('📱 Vidage de toutes les données SQLite');
+      await _dbManager.clearAllTables();
+      debugPrint('📱 Toutes les données SQLite ont été vidées');
+    }
+  }
+
   // Fermer la base de données
   Future<void> close() async {
     if (kIsWeb) {

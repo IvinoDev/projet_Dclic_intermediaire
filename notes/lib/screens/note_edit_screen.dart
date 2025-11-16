@@ -138,17 +138,59 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
     final shouldDiscard = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Modifications non sauvegardées'),
-        content: const Text('Voulez-vous quitter sans sauvegarder ?'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.orange.shade600,
+              size: 28,
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Modifications non sauvegardées',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Voulez-vous quitter sans sauvegarder ?',
+          style: TextStyle(fontSize: 15),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Annuler'),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: const Text(
+              'Annuler',
+              style: TextStyle(fontSize: 15),
+            ),
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Quitter'),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.red.shade50,
+            ),
+            child: TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red.shade600,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+              child: const Text(
+                'Quitter',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -170,121 +212,330 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.note == null ? 'Nouvelle note' : 'Modifier la note',
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.blue.shade50,
+                Colors.white,
+              ],
+            ),
           ),
-          backgroundColor: Colors.blue.shade600,
-          foregroundColor: Colors.white,
-          actions: [
-            if (_hasChanges)
-              TextButton(
-                onPressed: _isSaving ? null : _saveNote,
-                child: _isSaving
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      )
-                    : const Text(
-                        'Sauvegarder',
-                        style: TextStyle(color: Colors.white),
-                      ),
-              ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Champ titre
-              TextField(
-                controller: _titleController,
-                focusNode: _titleFocusNode,
-                decoration: const InputDecoration(
-                  hintText: 'Titre de la note',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                textInputAction: TextInputAction.next,
-                onSubmitted: (_) {
-                  _contentFocusNode.requestFocus();
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Champ contenu
-              Expanded(
-                child: TextField(
-                  controller: _contentController,
-                  focusNode: _contentFocusNode,
-                  decoration: const InputDecoration(
-                    hintText: 'Contenu de la note...',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                  maxLines: null,
-                  expands: true,
-                  textAlignVertical: TextAlignVertical.top,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Boutons d'action
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () async {
-                        if (_hasChanges) {
-                          final shouldDiscard = await _onWillPop();
-                          if (shouldDiscard && mounted) {
-                            Navigator.of(context).pop();
-                          }
-                        } else {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: const Text('Annuler'),
+          child: SafeArea(
+            child: Column(
+              children: [
+                // AppBar personnalisé avec gradient
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.blue.shade600,
+                        Colors.indigo.shade600,
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _hasChanges && !_isSaving ? _saveNote : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade600,
-                        foregroundColor: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
                       ),
-                      child: _isSaving
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                  size: 20,
                                 ),
                               ),
-                            )
-                          : const Text('Sauvegarder'),
+                              onPressed: () async {
+                                if (_hasChanges) {
+                                  final shouldDiscard = await _onWillPop();
+                                  if (shouldDiscard && mounted) {
+                                    Navigator.of(context).pop();
+                                  }
+                                } else {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              widget.note == null
+                                  ? 'Nouvelle note'
+                                  : 'Modifier la note',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_hasChanges)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextButton(
+                              onPressed: _isSaving ? null : _saveNote,
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                              ),
+                              child: _isSaving
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Sauvegarder',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                // Corps de la page
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        // Champ titre
+                        TextField(
+                          controller: _titleController,
+                          focusNode: _titleFocusNode,
+                          decoration: InputDecoration(
+                            hintText: 'Titre de la note',
+                            hintStyle: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 20,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Colors.blue.shade600,
+                                width: 2,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 18,
+                            ),
+                          ),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                          textInputAction: TextInputAction.next,
+                          onSubmitted: (_) {
+                            _contentFocusNode.requestFocus();
+                          },
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Champ contenu
+                        Expanded(
+                          child: TextField(
+                            controller: _contentController,
+                            focusNode: _contentFocusNode,
+                            decoration: InputDecoration(
+                              hintText: 'Contenu de la note...',
+                              hintStyle: TextStyle(
+                                color: Colors.grey.shade400,
+                                fontSize: 16,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade300,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade300,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Colors.blue.shade600,
+                                  width: 2,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.all(20),
+                            ),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              height: 1.5,
+                              color: Colors.black87,
+                            ),
+                            maxLines: null,
+                            expands: true,
+                            textAlignVertical: TextAlignVertical.top,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Boutons d'action
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 52,
+                                child: OutlinedButton(
+                                  onPressed: () async {
+                                    if (_hasChanges) {
+                                      final shouldDiscard = await _onWillPop();
+                                      if (shouldDiscard && mounted) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    } else {
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.grey.shade700,
+                                    side: BorderSide(
+                                      color: Colors.grey.shade400,
+                                      width: 1.5,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Annuler',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Container(
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  gradient: LinearGradient(
+                                    colors: _hasChanges && !_isSaving
+                                        ? [
+                                            Colors.blue.shade600,
+                                            Colors.indigo.shade600,
+                                          ]
+                                        : [
+                                            Colors.grey.shade400,
+                                            Colors.grey.shade500,
+                                          ],
+                                  ),
+                                  boxShadow: _hasChanges && !_isSaving
+                                      ? [
+                                          BoxShadow(
+                                            color: Colors.blue.shade300
+                                                .withOpacity(0.4),
+                                            blurRadius: 12,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                                child: ElevatedButton(
+                                  onPressed:
+                                      _hasChanges && !_isSaving ? _saveNote : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: _isSaving
+                                      ? const SizedBox(
+                                          width: 22,
+                                          height: 22,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.5,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      : Text(
+                                          'Sauvegarder',
+                                          style: TextStyle(
+                                            color: _hasChanges && !_isSaving
+                                                ? Colors.white
+                                                : Colors.grey.shade300,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
