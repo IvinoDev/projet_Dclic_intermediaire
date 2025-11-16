@@ -31,6 +31,21 @@
 
   <title>notes</title>
   <link rel="manifest" href="manifest.json">
+  
+  <script>
+    // Register Service Worker for SQLite
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sqflite_sw.js')
+          .then(function(registration) {
+            console.log('SQLite Service Worker registered:', registration);
+          })
+          .catch(function(error) {
+            console.log('SQLite Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
